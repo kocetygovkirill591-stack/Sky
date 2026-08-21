@@ -1,0 +1,1 @@
+Direct patch files are overlaid onto the base project during GitHub Actions builds.
