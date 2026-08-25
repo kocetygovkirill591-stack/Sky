@@ -15,14 +15,14 @@ jobs:
         shell: bash
         run: |
           set -e
-          if [ -f NORD_ANDROID_PROJECT_BASE.zip ]; then
-            echo "PROJECT_ARCHIVE=NORD_ANDROID_PROJECT_BASE.zip" >> "$GITHUB_ENV"
-          elif [ -f Nord_Novaya_Sudba_PROJECT1.zip ]; then
-            echo "PROJECT_ARCHIVE=Nord_Novaya_Sudba_PROJECT1.zip" >> "$GITHUB_ENV"
-          else
-            echo "No project ZIP found" >&2
-            exit 1
-          fi
+          for f in NORD_ANDROID_PROJECT_BASE.zip 'NORD_ANDROID_PROJECT_BASE (1).zip' Nord_Novaya_Sudba_PROJECT1.zip; do
+            if [ -f "$f" ]; then
+              echo "PROJECT_ARCHIVE=$f" >> "$GITHUB_ENV"
+              exit 0
+            fi
+          done
+          echo "No project ZIP found" >&2
+          exit 1
 
       - name: Extract project ZIP
         run: |
