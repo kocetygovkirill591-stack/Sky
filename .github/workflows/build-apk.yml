@@ -41,6 +41,7 @@ jobs:
           python3 patches/apply_nord_v41.py project/app/src/main/assets/index.html
           python3 patches/apply_nord_v42.py project/app/src/main/assets/index.html
           python3 patches/apply_nord_v43.py project/app/src/main/assets/index.html
+          python3 patches/apply_nord_v44.py project/app/src/main/assets/index.html
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
