@@ -15,14 +15,16 @@ jobs:
         shell: bash
         run: |
           set -e
-          for f in NORD_ANDROID_PROJECT_BASE.zip 'NORD_ANDROID_PROJECT_BASE (1).zip' Nord_Novaya_Sudba_PROJECT1.zip; do
-            if [ -f "$f" ]; then
-              echo "PROJECT_ARCHIVE=$f" >> "$GITHUB_ENV"
-              exit 0
-            fi
-          done
-          echo "No project ZIP found" >&2
-          exit 1
+          PROJECT_ARCHIVE=$(find . -maxdepth 1 -type f -name 'NORD_ANDROID_PROJECT_BASE*.zip' | head -n 1)
+          if [ -z "$PROJECT_ARCHIVE" ] && [ -f Nord_Novaya_Sudba_PROJECT1.zip ]; then
+            PROJECT_ARCHIVE=Nord_Novaya_Sudba_PROJECT1.zip
+          fi
+          if [ -z "$PROJECT_ARCHIVE" ]; then
+            echo "No project ZIP found" >&2
+            exit 1
+          fi
+          echo "PROJECT_ARCHIVE=$PROJECT_ARCHIVE" >> "$GITHUB_ENV"
+          echo "Using $PROJECT_ARCHIVE"
 
       - name: Extract project ZIP
         run: |
@@ -30,15 +32,12 @@ jobs:
           mkdir project
           unzip -q "$PROJECT_ARCHIVE" -d project
 
-      - name: Apply direct patches
+      - name: Apply direct NORD patches
         shell: bash
         run: |
           set -e
-          if [ -d patches ]; then
-            echo "Applying direct patches..."
-            cp -a patches/. project/
-          else
-            echo "No patches directory; building base project"
+          if [ -f patches/apply_nord_patches.py ]; then
+            python3 patches/apply_nord_patches.py project/app/src/main/assets/index.html
           fi
 
       - name: Set up JDK 17
